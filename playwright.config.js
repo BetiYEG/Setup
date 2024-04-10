@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 
@@ -10,11 +11,13 @@ const { defineConfig, devices } = require('@playwright/test');
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
+// eslint-disable-next-line no-undef
 module.exports = defineConfig({
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
+  // eslint-disable-next-line no-undef
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,

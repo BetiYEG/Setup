@@ -20,9 +20,11 @@ const LanguageSelector = () => {
   };
 
   return (
+    // eslint-disable-next-line react/react-in-jsx-scope
     <div className="btn-container">
       {languages.map((lng) => {
         return (
+          // eslint-disable-next-line react/react-in-jsx-scope
           <button
             className={lng.code === i18n.language ? "selected" : ""}
             key={lng.code}
