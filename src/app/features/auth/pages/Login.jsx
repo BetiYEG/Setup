@@ -1,8 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { Button } from "./button";
+import { Button } from "@/app/components/Button/button";
 import { Label } from "@radix-ui/react-label";
 import { FcGoogle } from 'react-icons/fc';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/app/components/Input/input'
 import { Image } from "lucide-react";
 function HomePage() {
   return (
