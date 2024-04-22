@@ -1,46 +1,53 @@
-/* eslint-disable react/react-in-jsx-scope */
+import React from 'react';
+import { useState } from 'react';
 import { Button } from "@/app/components/Button/button";
 import { Label } from "@radix-ui/react-label";
-import { FcGoogle } from 'react-icons/fc';
-import { Input } from '@/app/components/Input/input'
-import { Image } from "lucide-react";
+import { Input } from '@/app/components/Input/input';
+import { useNavigate } from 'react-router-dom';
+
 function HomePage() {
+  const navigate = useNavigate();
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    navigate('/Homepage');
+  };
+
   return (
     <main className="bg-[#26313c] h-screen flex items-center justify-center p-10">
-      <div className="grid w-full h-full grid-cols-1 bg-white md:grid-cols-2"> 
-        <div className="bg-[#16202a] text-white flex items-center justify-center flex-col">
-          <div className="my-4"> 
-            <h1 className="text-3xl font-semibold">Login</h1>
-            <p className="mt-2 text-xs text-slate-400">
-              {' '}
-              see your and get consulting growth
-            </p>
+      <div className="bg-white md:w-96 p-8 rounded-lg flex flex-col items-center">
+        <h1 className="text-3xl font-semibold mb-6">Login</h1>
+
+        <form onSubmit={handleLogin} className="w-full">
+          <Label htmlFor="email">Email*</Label>
+          <Input className="input-field mb-4" type="email" id="email" placeholder="Email" />
+          <Label htmlFor="password">Password</Label>
+          <Input className="input-field mb-4" type="password" id="password" placeholder="Password" />
+
+          <div className="flex items-center justify-between mb-6">
+            <label htmlFor="rememberMe" className="text-sm text-gray-400 cursor-pointer flex items-center">
+              <input type="checkbox" id="rememberMe" className="mr-2" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
+              Remember Me
+            </label>
+            <a href="/forgot-password" className="text-indigo-500 hover:underline">Forgot Password?</a>
           </div>
 
-          <form>
-            <Button className="flex items-center w-full gap-4 px-12 bg-transparent rounded-full"
-              variant="outline">
-              <FcGoogle />
-              Sign In with google
-            </Button>
-            <Label htmlFor="email">Email*</Label>
-            <Input className="mt-2 mb-4 bg-transparent rounded-full" type="email" id="email" placeholder="Email" />
-            <Label htmlFor="password">Password</Label>
-            
-            <Input className="mt-2 mb-4 bg-transparent rounded-full" type="password" id="password" placeholder="Password" />
-            <Button type="submit" className="w-full mt-6 bg-indigo- rounded-full bg-indigo- hover:bg-indigo-700"
-            >
-              Login
-            </Button>
-            <Image />
-          </form>
-          <p className="mt-4 text-xs text-slate-200">
-            @2024 All rights reserved.
+          <Button type="submit" className="w-full bg-indigo-500 text-white rounded-full py-2 hover:bg-indigo-700 mb-4">
+            Login
+          </Button>
 
+          <p className="mt-4 text-xs text-slate-200">
+            Don't have an account? <a href="/signup" className="text-indigo-500 hover:underline">Sign Up</a>
           </p>
-        </div>
+        </form>
+
+        <p className="mt-6 text-xs text-slate-200">
+          @2024 All rights reserved.
+        </p>
       </div>
-    </main>    
+    </main>
   );
 }
+
 export default HomePage;

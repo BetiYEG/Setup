@@ -2,7 +2,6 @@ import path from "path";
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -12,8 +11,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // eslint-disable-next-line no-undef
-      "@": path.resolve(__dirname, "./src"),
-    }
-  }
+      '@radix-ui/react-dropdown-menu': '/node_modules/@radix-ui/react-dropdown-menu/dist/index.module.js',
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
 });
