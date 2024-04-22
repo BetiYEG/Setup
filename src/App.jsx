@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import Performance from "./app/components/PerformanceReviewForm/Performance";
 import axios from "axios";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from "./app/features/auth/pages/Login";
+import HomePage from "./app/features/Login/pages/loginpage";
 import Home from "./app/dashboard/pages/Dashboard";
-import RegistrationForm from "./app/features/auth/pages/Register";
+import RegistrationForm from "./app/features/Login/Signup/pages/Registraion";
 import Header from "./app/layout/Header";
 import Sidebar from "./app/layout/Sidebar";
 import Employee from "./app/components/List/EmployeeList/Employee";
@@ -19,7 +19,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<HomePage />} />
           <Route path="/dashboard" element={<Home />} />
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/header" element={<Header />} />
