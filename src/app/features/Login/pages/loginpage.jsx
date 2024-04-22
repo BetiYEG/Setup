@@ -11,8 +11,22 @@ function HomePage() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate('/Homepage');
-  };
+    const enteredPassword = e.target.elements.password.value;
+  
+    if (enteredPassword === "admin123") {
+      // Redirect to admin page
+      navigate('/Homepage');
+    } else if (enteredPassword === "manager123") {
+      // Redirect to manager page
+      navigate('/manager');
+    } else if (enteredPassword === "employee123") {
+      // Redirect to client page
+      navigate('/employee');
+    } else {
+      // Invalid password, show an error message or handle it as needed
+      console.log("Invalid password, Try Again");
+    }
+  }
 
   return (
     <main className="bg-[#26313c] h-screen flex items-center justify-center p-10">
