@@ -4,21 +4,17 @@ import { Button } from "@/app/components/Button/button";
 import { Label } from "@radix-ui/react-label";
 import { Input } from '@/app/components/Input/input';
 import { useNavigate } from 'react-router-dom';
-
 function HomePage() {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
-
   const handleLogin = (e) => {
     e.preventDefault();
     navigate('/Homepage');
   };
-
   return (
     <main className="bg-[#26313c] h-screen flex items-center justify-center p-10">
       <div className="bg-white md:w-96 p-8 rounded-lg flex flex-col items-center">
         <h1 className="text-3xl font-semibold mb-6">Login</h1>
-
         <form onSubmit={handleLogin} className="w-full">
           <Label htmlFor="email">Email*</Label>
           <Input className="input-field mb-4" type="email" id="email" placeholder="Email" />
@@ -49,5 +45,4 @@ function HomePage() {
     </main>
   );
 }
-
 export default HomePage;
