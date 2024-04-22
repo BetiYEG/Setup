@@ -19,11 +19,13 @@ function HomePage() {
       <div className="bg-white md:w-96 p-8 rounded-lg flex flex-col items-center">
         <h1 className="text-3xl font-semibold mb-6">Login</h1>
 
-        <form onSubmit={handleLogin} className="w-full">
-          <Label htmlFor="email">Email*</Label>
-          <Input className="input-field mb-4" type="email" id="email" placeholder="Email" />
-          <Label htmlFor="password">Password</Label>
-          <Input className="input-field mb-4" type="password" id="password" placeholder="Password" />
+        <form onSubmit={handleLogin} className="w-full" method="post">
+          <Label htmlFor="email">Email*
+          <Input className="input-field mb-4 valid:border-indigo-500" type="email" id="email" name="email" placeholder="Email" required />
+          </Label>
+          <Label htmlFor="password">Password*
+          <Input className="input-field mb-4 valid:border-indigo-500" type="password" id="password" name="password" placeholder="Password" pattern="[a-z0-5]{8,}" required />
+          </Label>
 
           <div className="flex items-center justify-between mb-6">
             <label htmlFor="rememberMe" className="text-sm text-gray-400 cursor-pointer flex items-center">
@@ -37,12 +39,12 @@ function HomePage() {
             Login
           </Button>
 
-          <p className="mt-4 text-xs text-slate-200">
-            Don't have an account? <a href="/signup" className="text-indigo-500 hover:underline">Sign Up</a>
+          <p className="mt-4 text-xs text-gray-400">
+            Don't have an account?<a href="/signup" className="text-indigo-500 hover:underline">Sign Up</a>
           </p>
         </form>
 
-        <p className="mt-6 text-xs text-slate-200">
+        <p className="mt-6 text-xs text-gray-400">
           @2024 All rights reserved.
         </p>
       </div>
