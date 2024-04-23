@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/app/components/Button/button";
 import { Label } from "@radix-ui/react-label";
 import { Input } from '@/app/components/Input/input';
@@ -12,19 +11,39 @@ function HomePage() {
   const handleLogin = (e) => {
     e.preventDefault();
     const enteredPassword = e.target.elements.password.value;
-  
-    if (enteredPassword === "admin123") {
-      // Redirect to admin page
-      navigate('/Homepage');
-    } else if (enteredPassword === "manager123") {
-      // Redirect to manager page
-      navigate('/manager');
-    } else if (enteredPassword === "employee123") {
-      // Redirect to client page
-      navigate('/employee');
+
+    // Send the password to the server for authentication and authorization
+    // Implement server-side logic to validate the password and retrieve the user's role
+
+    // Example: Assuming the server returns the user's role upon successful authentication and authorization
+    const role = authenticateUser(enteredPassword);
+
+    if (role) {
+      // Redirect to the appropriate page based on the user's role
+      if (role === "admin") {
+        navigate('/admin');
+      } else if (role === "manager") {
+        navigate('/manager');
+      } else if (role === "employee") {
+        navigate('/employee');
+      }
     } else {
-      // Invalid password, show an error message or handle it as needed
-      console.log("Invalid password, Try Again");
+      // Invalid password or authentication error, show an error message or handle it as needed
+      console.log("Invalid password or authentication error, Try Again");
+    }
+  }
+
+  const authenticateUser = (password) => {
+    // Implement server-side logic to authenticate the user and retrieve the user's role
+    // Example: Hard-coded password check, replace with your own authentication logic
+    if (password === "admin123") {
+      return "admin";
+    } else if (password === "manager123") {
+      return "manager";
+    } else if (password === "employee123") {
+      return "employee";
+    } else {
+      return null;
     }
   }
 

@@ -1,13 +1,14 @@
+import Header from '@/app/layout/Header';
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import Home from '../dashboard/pages/Dashboard';
-import { FcDepartment } from "react-icons/fc";
+import Home from './Dashboard';
+
 import {
-  BsGrid1X2Fill, BsFillGrid3X3GapFill, BsPeopleFill,
-  BsListCheck, BsMenuButtonWideFill, BsFillGearFill, BsBriefcaseFill, BsPaypal} from 'react-icons/bs';
+  BsFillGrid3X3GapFill, BsPeopleFill,
+  BsMenuButtonWideFill, BsBriefcaseFill, BsPaypal
+} from 'react-icons/bs';
 
 // eslint-disable-next-line react/prop-types
-function Sidebar({ openSidebarToggle, OpenSidebar }) {
+function Manager({ openSidebarToggle, OpenSidebar }) {
   const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   }, []);
 
   // Define user roles (replace this with actual user roles)
-  const userRoles = ['admin']; // Example: User has 'admin' role
+  const userRoles = ['manager']; // Example: User has 'manager' role
 
   // Filter menu items based on user roles
   const filteredMenuItems = menuItems.filter(item => userRoles.includes(item.role));
@@ -52,34 +53,14 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
               <span className='cursor-pointer' onClick={OpenSidebar}></span>
             </div>
             <ul className={`space-y-2 ${openSidebarToggle ? 'block' : 'hidden md:block'}`}>
-            <li className='sidebar-list-item'>
-                <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <BsFillGearFill className='text-lg mr-2' /> Setting
-                </a>
-              </li>
               <li className='sidebar-list-item'>
                 <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <BsGrid1X2Fill className='text-lg mr-2' /> Dashboard
-                </a>
-              </li>
-              <li className='sidebar-list-item'>
-                <a href="Performance" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsFillGrid3X3GapFill className='text-lg mr-2' /> Performance
                 </a>
               </li>
               <li className='sidebar-list-item'>
                 <a href="Employee" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPeopleFill className='text-lg mr-2' /> Employees
-                </a>
-              </li>
-              <li className='sidebar-list-item'>
-                <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <BsListCheck className='text-lg mr-2' /> Attendance
-                </a>
-              </li>
-              <li className='sidebar-list-item'>
-                <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <FcDepartment className='text-lg mr-2' /> Department
                 </a>
               </li>
               <li className='sidebar-list-item'>
@@ -97,7 +78,6 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
                   <BsPaypal className='text-lg mr-2' /> Salary
                 </a>
               </li>
-              
             </ul>
           </aside>
         </div>
@@ -109,4 +89,4 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   );
 }
 
-export default Sidebar;
+export default Manager;
