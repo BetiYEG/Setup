@@ -7,43 +7,51 @@ import { useNavigate } from 'react-router-dom';
 function HomePage() {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
+  const [user, setUser] = useState(null); // State to store user information
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const enteredPassword = e.target.elements.password.value;
 
-    // Send the password to the server for authentication and authorization
-    // Implement server-side logic to validate the password and retrieve the user's role
-
-    // Example: Assuming the server returns the user's role upon successful authentication and authorization
-    const role = authenticateUser(enteredPassword);
-
-    if (role) {
-      // Redirect to the appropriate page based on the user's role
-      if (role === "admin") {
-        navigate('/admin');
-      } else if (role === "manager") {
-        navigate('/manager');
-      } else if (role === "employee") {
-        navigate('/employee');
+    // Simulate server authentication
+    try {
+      const role = await authenticateUser(enteredPassword);
+      if (role) {
+        setUser({ name: 'John Doe', role }); // Store user information
+        redirectBasedOnRole(role); // Redirect based on user role
+      } else {
+        console.log("Invalid password or authentication error, Try Again");
       }
-    } else {
-      // Invalid password or authentication error, show an error message or handle it as needed
-      console.log("Invalid password or authentication error, Try Again");
+    } catch (error) {
+      console.error("Error authenticating user:", error);
     }
   };
 
-  const authenticateUser = (password) => {
-    // Implement server-side logic to authenticate the user and retrieve the user's role
-    // Example: Hard-coded password check, replace with your own authentication logic
-    if (password === "admin123") {
-      return "admin";
-    } else if (password === "manager123") {
-      return "manager";
-    } else if (password === "employee123") {
-      return "employee";
-    } else {
-      return null;
+  const authenticateUser = async (password) => {
+    // Simulated server authentication logic
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (password === "admin123") {
+          resolve("admin");
+        } else if (password === "manager123") {
+          resolve("manager");
+        } else if (password === "employee123") {
+          resolve("employee");
+        } else {
+          resolve(null);
+        }
+      }, 1000); // Simulate delay for API call
+    });
+  };
+
+  const redirectBasedOnRole = (role) => {
+    // Redirect to the appropriate page based on the user's role
+    if (role === "admin") {
+      navigate('/admin');
+    } else if (role === "manager") {
+      navigate('/manager');
+    } else if (role === "employee") {
+      navigate('/employee');
     }
   };
 
@@ -74,7 +82,7 @@ function HomePage() {
         </form>
 
         <p className="mt-4 text-xs text-gray-400">
-          Don't have an account?<a href="/signup" className="text-indigo-500 hover:underline">Sign Up</a>
+          Don't have an account? <a href='/signup' className='text-indigo-500 hover:underline'>Sign Up</a>
         </p>
 
         <p className="mt-6 text-xs text-gray-400">
