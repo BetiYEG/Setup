@@ -7,51 +7,43 @@ import { useNavigate } from 'react-router-dom';
 function HomePage() {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
-  const [user, setUser] = useState(null); // State to store user information
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     const enteredPassword = e.target.elements.password.value;
 
-    // Simulate server authentication
-    try {
-      const role = await authenticateUser(enteredPassword);
-      if (role) {
-        setUser({ name: 'John Doe', role }); // Store user information
-        redirectBasedOnRole(role); // Redirect based on user role
-      } else {
-        console.log("Invalid password or authentication error, Try Again");
+    // Send the password to the server for authentication and authorization
+    // Implement server-side logic to validate the password and retrieve the user's role
+
+    // Example: Assuming the server returns the user's role upon successful authentication and authorization
+    const role = authenticateUser(enteredPassword);
+
+    if (role) {
+      // Redirect to the appropriate page based on the user's role
+      if (role === "admin") {
+        navigate('/admin');
+      } else if (role === "manager") {
+        navigate('/manager');
+      } else if (role === "employee") {
+        navigate('/employee');
       }
-    } catch (error) {
-      console.error("Error authenticating user:", error);
+    } else {
+      // Invalid password or authentication error, show an error message or handle it as needed
+      console.log("Invalid password or authentication error, Try Again");
     }
   };
 
-  const authenticateUser = async (password) => {
-    // Simulated server authentication logic
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (password === "admin123") {
-          resolve("admin");
-        } else if (password === "manager123") {
-          resolve("manager");
-        } else if (password === "employee123") {
-          resolve("employee");
-        } else {
-          resolve(null);
-        }
-      }, 1000); // Simulate delay for API call
-    });
-  };
-
-  const redirectBasedOnRole = (role) => {
-    // Redirect to the appropriate page based on the user's role
-    if (role === "admin") {
-      navigate('/admin');
-    } else if (role === "manager") {
-      navigate('/manager');
-    } else if (role === "employee") {
-      navigate('/employee');
+  const authenticateUser = (password) => {
+    // Implement server-side logic to authenticate the user and retrieve the user's role
+    // Example: Hard-coded password check, replace with your own authentication logic
+    if (password === "admin123") {
+      return "admin";
+    } else if (password === "manager123") {
+      return "manager";
+    } else if (password === "employee123") {
+      return "employee";
+    } else {
+      return null;
     }
   };
 
