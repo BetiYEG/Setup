@@ -1,13 +1,13 @@
+import Header from '@/app/layout/Header';
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import Home from '../dashboard/pages/Dashboard';
+import Home from './Dashboard';
 import { FcDepartment } from "react-icons/fc";
 import {
   BsGrid1X2Fill, BsFillGrid3X3GapFill, BsPeopleFill,
   BsListCheck, BsMenuButtonWideFill, BsFillGearFill, BsBriefcaseFill, BsPaypal} from 'react-icons/bs';
 
 // eslint-disable-next-line react/prop-types
-function Sidebar({ openSidebarToggle, OpenSidebar }) {
+function Admin({ openSidebarToggle, OpenSidebar }) {
   const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
@@ -109,4 +109,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   );
 }
 
-export default Sidebar;
+
+
+
+export default Admin;

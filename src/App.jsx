@@ -1,4 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/react-in-jsx-scope */
 import { useEffect } from "react";
 import Performance from "./app/components/PerformanceReviewForm/Performance";
 import axios from "axios";
@@ -7,28 +8,35 @@ import HomePage from "./app/features/Login/pages/loginpage";
 import Home from "./app/dashboard/pages/Dashboard";
 import RegistrationForm from "./app/features/Login/Signup/pages/Registraion";
 import Header from "./app/layout/Header";
-import Sidebar from "./app/layout/Sidebar";
 import Employee from "./app/components/List/EmployeeList/Employee";
+import Admin from "./app/dashboard/pages/Admin";
+import Manager from "./app/dashboard/pages/Manager";
+
+
 function App() {
   useEffect(() => {
-    axios.get(" https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8")
-      .then(res => console.log(res))
+    axios.get("https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8")
+      .then(res => console.log(res.data))
       .catch(err => console.log(err));
   }, []);
+
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <>
         <Routes>
           <Route path="/login" element={<HomePage />} />
-          <Route path="/dashboard" element={<Home />} />
+          <Route path="/dashboard/" element={<Home />} />
           <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/header" element={<Header />} />
-          <Route path="/homepage" element={<Sidebar />} />
-          <Route path="/Performance" element={<Performance />} />
-          <Route path="/Employee" element={<Employee />} />
+          
+          <Route path="/performance/:id" element={<Performance />} />
+          <Route path="/employee/:id" element={<Employee />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/manager" element={<Manager />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </>
+    </BrowserRouter>
   );
 }
+
 export default App;
