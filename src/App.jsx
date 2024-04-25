@@ -26,13 +26,14 @@ function App() {
         <Routes>
           <Route path="/login" element={<HomePage />} />
           <Route path="/dashboard/" element={<Home />} />
-          <Route path="/reg" element={<RegistrationForm />} />
           <Route path="/header" element={<Header />} />
           
           <Route path="/performance/:id" element={<Performance />} />
           <Route path="/employee/:id" element={<Employee />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/manager" element={<Manager />} />
+          <Route path="/signup" element={<RegistrationForm />} />
+
         </Routes>
       </>
     </BrowserRouter>
