@@ -36,7 +36,7 @@ function Header() {
         <div className='relative'>
           <BsPersonCircle className='icon text-gray-600 cursor-pointer' onClick={toggleDropdown} />
           {isDropdownOpen && (
-            <div className='absolute top-10 right-0 bg-white border border-gray-300 rounded-md p-2'>
+            <div className='absolute top-10 right-0 bg-black border border-gray-300 rounded-md p-2'>
               <div className='mb-2'>John Doe</div>
               <button className='text-gray-600 hover:text-red-500' onClick={handleLogout}>
                 Logout
