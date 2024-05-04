@@ -68,7 +68,7 @@ function Admin({ openSidebarToggle, OpenSidebar }) {
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="Employee" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="SubmittedProfile" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPeopleFill className='text-lg mr-2' /> Employees
                 </a>
               </li>

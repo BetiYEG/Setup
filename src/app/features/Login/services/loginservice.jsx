@@ -11,7 +11,11 @@ const loginservice = {
       });
       return response.data;
     } catch (error) {
-      throw new Error('Login failed');
+      // Throw an error with the response data or a generic message if data is not available
+      const errorMessage = error.response ? error.response.data.message : 'Login failed';
+      // Display the error message on the UI
+      HomePage.displayError(errorMessage);
+      throw new Error(errorMessage);
     }
   },
 
@@ -23,7 +27,11 @@ const loginservice = {
       });
       return response.data;
     } catch (error) {
-      throw new Error('Registration failed');
+      // Throw an error with the response data or a generic message if data is not available
+      const errorMessage = error.response ? error.response.data.message : 'Registration failed';
+      // Display the error message on the UI
+      HomePage.displayError(errorMessage);
+      throw new Error(errorMessage);
     }
   }
 };

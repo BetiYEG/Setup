@@ -14,6 +14,7 @@ import Employee from "./app/dashboard/pages/employee";
 import ForgotPasswordPage from "./app/features/Login/Signup/pages/Forgetpassword";
 import EmployeeHome from "./app/dashboard/pages/Home";
 import Profile from "./app/dashboard/pages/Profile";
+import SubmittedProfile from "./app/dashboard/pages/SubmittedProfile";
 
 
 function App() {
@@ -37,7 +38,7 @@ function App() {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Forget" element={<ForgotPasswordPage />} />
           <Route path="/employee" element={<Employee />} />
-
+          <Route path="/SubmittedProfile" element={<SubmittedProfile />} /> 
 
           <Route path="/signup" element={<RegistrationForm />} />
 
