@@ -53,7 +53,7 @@ function Admin({ openSidebarToggle, OpenSidebar }) {
             </div>
             <ul className={`space-y-2 ${openSidebarToggle ? 'block' : 'hidden md:block'}`}>
             <li className='sidebar-list-item'>
-                <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/Settings" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsFillGearFill className='text-lg mr-2' /> Setting
                 </a>
               </li>
@@ -93,7 +93,7 @@ function Admin({ openSidebarToggle, OpenSidebar }) {
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="/Salary" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="#salary" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPaypal className='text-lg mr-2' /> Salary
                 </a>
               </li>
