@@ -84,7 +84,7 @@ function Settings({ openSidebarToggle, OpenSidebar }) {
 									href=""
 									className="flex items-center px-2 py-1 transition-colors rounded-lg hover:bg-blue-500 hover:text-white"
 								>
-									<GiTrophyCup className="mr-2 text-lg" /> Performancce
+									<GiTrophyCup className="mr-2 text-lg" /> Performance
 								</a>
 							</li>
 							<li className="sidebar-list-item">

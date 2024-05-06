@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { Button } from "@/app/components/Button/button";
-import { Label } from "@radix-ui/react-label";
+import { Button } from '@/app/components/Button/button';
+import { Label } from '@radix-ui/react-label';
 import { Input } from '@/app/components/Input/input';
 import { useNavigate } from 'react-router-dom';
-import { FiEye, FiEyeOff } from 'react-icons/fi'; // Import the eye icons
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import loginservice from '../services/loginservice';
 
 function HomePage() {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null); // State variable for error message
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,31 +18,24 @@ function HomePage() {
     const enteredPassword = e.target.elements.password.value;
 
     try {
-      // Call the login function from loginservice
       await loginservice.login(enteredEmail, enteredPassword);
-
-      // Redirect to the appropriate page after successful authentication
-      navigate('/employee');
+      navigate('/Admin');
     } catch (error) {
-      // Handle any errors that occur during the login process
-      console.error("Login error:", error);
+      setError('Login failed. Please check your credentials.'); // Set the error message
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleRegister = async (e) => {
     e.preventDefault();
     const enteredEmail = e.target.elements.email.value;
     const enteredPassword = e.target.elements.password.value;
 
     try {
-      // Call the register function from loginservice
       await loginservice.register(enteredEmail, enteredPassword);
-
-      // Redirect to the appropriate page after successful registration
       navigate('/dashboard');
     } catch (error) {
-      // Handle any errors that occur during the registration process
-      console.error("Registration error:", error);
+      setError('Registration failed. Please try again.'); // Set the error message
     }
   };
 
@@ -49,6 +43,7 @@ function HomePage() {
     <main className="bg-[#26313c] h-screen flex items-center justify-center p-10">
       <div className="bg-white md:w-96 p-8 rounded-lg flex flex-col items-center">
         <h1 className="text-3xl font-semibold mb-6">Login</h1>
+        {error && <p className="text-red-500 mb-4">{error}</p>} {/* Display the error message */}
         <form onSubmit={handleLogin} className="w-full" method="post">
           <Label htmlFor="email">
             Email*

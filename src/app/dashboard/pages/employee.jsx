@@ -1,4 +1,4 @@
-import React, { } from 'react';
+import React from 'react';
 import { BsPeopleFill } from 'react-icons/bs';
 import Header from '@/app/layout/Header';
 import { FaRegCommentAlt } from "react-icons/fa";
@@ -97,6 +97,9 @@ function Employee({ openSidebarToggle, OpenSidebar }) {
           <p>Current Time: {currentTime}</p>
           </div>
           {/* Add the rest of the employee page content */}
+        </div>
+        <div className="ml-0 mr-0 w-2/3">
+          {/* Add <EmployeeHome /> */}
         </div>
       </div>
       {showAttendancePopup && (
