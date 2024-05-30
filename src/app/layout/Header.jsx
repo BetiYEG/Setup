@@ -2,24 +2,31 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle, BsSearch } from 'react-icons/bs';
 
-function Header() {
+
+function Header({ employeeFirstName, employeeLastName }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize the navigate function
+  const [isPersonalInfoOpen, setIsPersonalInfoOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleLogout = () => {
-    // Perform logout logic here, such as clearing user session or redirecting to the login page
-    // Example: 
-    // clearUserSession();
-    // redirectToLoginPage();
-    console.log('Logged out');
-    
-    // Redirect to the login page
-    navigate('/login');
+  const togglePersonalInfo = () => {
+    setIsPersonalInfoOpen(!isPersonalInfoOpen);
   };
+
+  const handleLogout = () => {
+    console.log('Logged out');
+    navigate('/');
+  };
+
+  const handleViewProfile = () => {
+    navigate('/profile');
+  };
+
+  // Constructing the full name
+  const fullName = `${employeeFirstName} ${employeeLastName}`;
 
   return (
     <header className='header bg-white shadow-md py-4 px-6 flex justify-between items-center'>
@@ -34,10 +41,21 @@ function Header() {
         <BsFillBellFill className='icon text-gray-600' />
         <BsFillEnvelopeFill className='icon text-gray-600' />
         <div className='relative'>
-          <BsPersonCircle className='icon text-gray-600 cursor-pointer' onClick={toggleDropdown} />
+          <BsPersonCircle className={`icon text-gray-600 cursor-pointer ${isDropdownOpen ? 'text-blue-500' : ''}`} onClick={toggleDropdown} />
           {isDropdownOpen && (
-            <div className='absolute top-10 right-0 bg-black border border-gray-300 rounded-md p-2'>
-              <div className='mb-2'>John Doe</div>
+            <div className='absolute top-10 right-0 bg-white border border-gray-300 rounded-md shadow-md p-2'>
+              <div className='mb-2'>
+                {/* Displaying the full name */}
+                <div className='text-gray-800 font-semibold'>{fullName}</div>
+              </div>
+              <button className={`text-gray-600 hover:text-red-500 ${isPersonalInfoOpen ? 'text-blue-500' : ''}`} onClick={handleViewProfile}>
+                Profile
+              </button>
+              {isPersonalInfoOpen && (
+                <div className='mt-2'>
+                  {/* Additional personal info */}
+                </div>
+              )}
               <button className='text-gray-600 hover:text-red-500' onClick={handleLogout}>
                 Logout
               </button>

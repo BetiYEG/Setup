@@ -1,57 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/app/components/Button/button';
 import { Label } from '@radix-ui/react-label';
 import { Input } from '@/app/components/Input/input';
 import { useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import loginservice from '../services/loginservice';
+import Cookies from 'js-cookie';
 
 function HomePage() {
   const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(null); // State variable for error message
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const storedEmail = Cookies.get('rememberedEmail');
+    const storedRememberMe = Cookies.get('rememberMe') === 'true';
+    if (storedEmail && storedRememberMe) {
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const enteredEmail = e.target.elements.email.value;
+    const enteredEmail = e.target.elements.employeeEmail.value;
     const enteredPassword = e.target.elements.password.value;
+    setIsLoading(true);
 
     try {
-      await loginservice.login(enteredEmail, enteredPassword);
-      navigate('/Admin');
+      const response = await loginservice.login(enteredEmail, enteredPassword);
+
+      if (response && response.value) {
+        const { token, roleName } = response.value;
+
+        // Store the token
+        localStorage.setItem('authToken', token);
+
+        if (rememberMe) {
+          Cookies.set('rememberedEmail', enteredEmail, { expires: 7 });
+          Cookies.set('rememberMe', 'true', { expires: 7 });
+        } else {
+          Cookies.remove('rememberedEmail');
+          Cookies.remove('rememberMe');
+        }
+
+        switch (roleName) {
+          case 'Admin':
+            navigate('/admin');
+            break;
+          case 'Hr':
+            navigate('/manager');
+            break;
+          case 'Employee':
+            navigate('/employee');
+            break;
+          default:
+            setError('Unknown role. Please contact support.');
+            break;
+        }
+      } else {
+        setError('Login failed. Please check your credentials.');
+      }
     } catch (error) {
-      setError('Login failed. Please check your credentials.'); // Set the error message
+      console.error('Login error:', error); // Log the error for debugging
+      setError('Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    const enteredEmail = e.target.elements.email.value;
-    const enteredPassword = e.target.elements.password.value;
-
-    try {
-      await loginservice.register(enteredEmail, enteredPassword);
-      navigate('/dashboard');
-    } catch (error) {
-      setError('Registration failed. Please try again.'); // Set the error message
-    }
+  const handleRememberMeChange = () => {
+    setRememberMe(!rememberMe);
   };
 
   return (
     <main className="bg-[#26313c] h-screen flex items-center justify-center p-10">
       <div className="bg-white md:w-96 p-8 rounded-lg flex flex-col items-center">
         <h1 className="text-3xl font-semibold mb-6">Login</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>} {/* Display the error message */}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <form onSubmit={handleLogin} className="w-full" method="post">
-          <Label htmlFor="email">
+          <Label htmlFor="employeeEmail">
             Email*
             <Input
               className="input-field mb-4 valid:border-indigo-500"
               type="email"
-              id="email"
-              name="email"
+              id="employeeEmail"
+              name="employeeEmail"
               placeholder="Email"
               required
             />
@@ -90,7 +125,7 @@ function HomePage() {
                 id="rememberMe"
                 className="mr-2"
                 checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
+                onChange={handleRememberMeChange}
               />
               Remember Me
             </label>
@@ -101,16 +136,11 @@ function HomePage() {
           <Button
             type="submit"
             className="w-full bg-indigo-500 text-white rounded-full py-2 hover:bg-indigo-700 mb-4"
+            disabled={isLoading}
           >
-            Login
+            {isLoading ? 'Loading...' : 'Login'}
           </Button>
         </form>
-        <p className="mt-4 text-xs text-gray-400">
-          Don't have an account?{' '}
-          <a href="/signup" className="text-indigo-500 hover:underline">
-            Sign Up
-          </a>
-        </p>
         <p className="mt-6 text-xs text-gray-400">@2024 All rights reserved.</p>
       </div>
     </main>

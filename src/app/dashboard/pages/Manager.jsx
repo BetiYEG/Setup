@@ -7,7 +7,6 @@ import {
   BsMenuButtonWideFill, BsBriefcaseFill, BsPaypal
 } from 'react-icons/bs';
 
-// eslint-disable-next-line react/prop-types
 function Manager({ openSidebarToggle, OpenSidebar }) {
   const [menuItems, setMenuItems] = useState([]);
 
@@ -30,10 +29,10 @@ function Manager({ openSidebarToggle, OpenSidebar }) {
     fetchMenuData();
   }, []);
 
-  // Define user roles (replace this with actual user roles)
-  const userRoles = ['manager']; // Example: User has 'manager' role
+  
+  const userRoles = ['manager']; 
 
-  // Filter menu items based on user roles
+ 
   const filteredMenuItems = menuItems.filter(item => userRoles.includes(item.role));
 
   return (

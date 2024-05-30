@@ -3,7 +3,7 @@ import { Button } from "@/app/components/Button/button";
 import { Label } from "@radix-ui/react-label";
 import { Input } from '@/app/components/Input/input';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+
 
 function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
