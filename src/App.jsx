@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Performance from './app/components/PerformanceReviewForm/Performance';
 import HomePage from './app/features/Login/pages/loginpage';
 import Home from './app/dashboard/pages/Dashboard';
@@ -30,11 +30,20 @@ import PayrollList from './app/dashboard/pages/PayrollList';
 import EmployeeDetail from './app/dashboard/pages/EmployeeDetail';
 import FileUploadPage from './app/dashboard/pages/Fileupload';
 import FileUploadList from './app/dashboard/pages/FileuploadList';
+import ReportForm from './app/dashboard/pages/ReportForm';
+import AdminLeave from './app/dashboard/pages/AdminLeave';
+import AttendanceReport from './app/dashboard/pages/AttendanceReport';
+import LeaveReport from './app/dashboard/pages/LeaveReport';
+import WeeklyReport from './app/dashboard/pages/WeeklyReport';
+import GenerateReport from './app/dashboard/pages/GenerateReport';
+import WeaklyReportForm from './app/dashboard/pages/WeaklyReportform';
+import TrainingList from './app/dashboard/pages/Training';
+import TrainingForm from './app/dashboard/pages/TrainingForm';
 function App() {
   useEffect(() => {
     axios.get("")
       .then(res => {
-        console.log("Response data:", res.data); // Log the response data
+        console.log("Response data:", res.data);
       })
       .catch(err => console.log("Error:", err));
   }, []);
@@ -71,7 +80,16 @@ function App() {
         <Route path="/EmployeeDetail" element={<EmployeeDetail />} />
         <Route path="/FileUploadPage/:employeeId" element={<FileUploadPage />} />
         <Route path="/FileUploadList" element={<FileUploadList />} />
-
+        <Route path="/ReportForm" element={<ReportForm />} />
+        <Route path="/AdminLeave" element={<AdminLeave />} />
+        <Route path="/AttendanceReport" element={<AttendanceReport />} />
+        <Route path="/LeaveReport" element={<LeaveReport />} />
+        <Route path="/WeeklyReport" element={<WeeklyReport />} />
+        <Route path="/GenerateReport" element={<GenerateReport />} />
+        <Route path="/WeaklyReportform" element={<WeaklyReportForm />} />
+        <Route path="/TrainingList" element={<TrainingList/>} />
+        <Route path="/TrainingForm" element={<TrainingForm/>} />
+        
       </Routes>
     </BrowserRouter>
   );

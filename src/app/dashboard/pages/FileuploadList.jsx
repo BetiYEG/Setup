@@ -48,11 +48,11 @@ const FileUploadList = ({ employeeId }) => {
                                     </a>
                                 </div>
                             )}
-                            {file.type === 'certificates' && (
+                            {file.type === 'certeficate' && (
                                 <div>
-                                    <strong>Certificates:</strong>
-                                    <a href={file.url} download={`certificates-${index}.pdf`} target="_blank" rel="noopener noreferrer">
-                                        Download Certificates
+                                    <strong>Certeficate:</strong>
+                                    <a href={file.url} download={`certeficate-${index}.pdf`} target="_blank" rel="noopener noreferrer">
+                                        Download Certeficate
                                     </a>
                                 </div>
                             )}
@@ -64,10 +64,10 @@ const FileUploadList = ({ employeeId }) => {
                                     </a>
                                 </div>
                             )}
-                            {file.type === 'profilePhoto' && (
+                            {file.type === 'employeeImage' && (
                                 <div>
-                                    <strong>Profile Photo:</strong>
-                                    <img src={file.url} alt={`Profile Photo ${index}`} className="w-24 h-24 object-cover" />
+                                    <strong>Employee Image:</strong>
+                                    <img src={file.url} alt={`Employee Image ${index}`} className="w-24 h-24 object-cover" />
                                 </div>
                             )}
                         </li>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { fetchLeaveHistory } from '../services/LeaveService';
 import Header from '@/app/layout/Header';
-import { fetchLeaveHistory, approveLeave, disapproveLeave } from '../services/LeaveService';
-import { BsPaypal, BsFillGrid3X3GapFill, BsBriefcaseFill, BsMenuButtonWideFill, BsChevronDown } from 'react-icons/bs';
+import { BsDownload, BsChevronDown, BsBriefcaseFill, BsMenuButtonWideFill, BsPaypal, BsFillGrid3X3GapFill } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 
-const Leave = () => {
+const LeaveReport = () => {
   const [leaveHistory, setLeaveHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -25,29 +25,11 @@ const Leave = () => {
     fetchLeaveData();
   }, []);
 
-  const handleApprove = async (leaveId) => {
-    try {
-      await approveLeave(leaveId);
-      // Refresh leave history after approval
-      const updatedLeaveHistory = await fetchLeaveHistory();
-      setLeaveHistory(updatedLeaveHistory);
-    } catch (error) {
-      console.error('Error approving leave:', error);
-    }
+  const handleDownload = (employeeId) => {
+    console.log(`Download leave history for employee ID: ${employeeId}`);
   };
 
-  const handleDisapprove = async (leaveId) => {
-    try {
-      await disapproveLeave(leaveId);
-      // Refresh leave history after disapproval
-      const updatedLeaveHistory = await fetchLeaveHistory();
-      setLeaveHistory(updatedLeaveHistory);
-    } catch (error) {
-      console.error('Error disapproving leave:', error);
-    }
-  };
-
-  const handleSidebarToggle = () => {
+  const OpenSidebar = () => {
     setOpenSidebarToggle(!openSidebarToggle);
   };
 
@@ -63,17 +45,17 @@ const Leave = () => {
           <aside id="sidebar">
             <div className='flex justify-between items-center mb-4'>
               <div className='flex items-center'>
-                <button className="md:hidden" onClick={handleSidebarToggle}>
+                <button className="md:hidden" onClick={OpenSidebar}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
               </div>
-              <span className='cursor-pointer' onClick={handleSidebarToggle}></span>
+              <span className='cursor-pointer' onClick={OpenSidebar}></span>
             </div>
             <ul className={`space-y-2 ${openSidebarToggle ? 'block' : 'hidden md:block'}`}>
               <li className='sidebar-list-item'>
-                <a href="#" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/Performance" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsFillGrid3X3GapFill className='text-lg mr-2' /> Performance
                 </a>
               </li>
@@ -103,20 +85,20 @@ const Leave = () => {
                 )}
               </li>
               <li className='sidebar-list-item'>
-                <Link to="/Leave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/Leave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsBriefcaseFill className='text-lg mr-2' /> Leave
-                </Link>
+                </a>
               </li>
               <li className='sidebar-list-item'>
-                <Link to="/PayrollList" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/PayrollList" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPaypal className='text-lg mr-2' /> Salary
-                </Link>
+                </a>
               </li>
             </ul>
           </aside>
         </div>
-        <div className="flex-grow flex flex-col justify-start items-center bg-gray-200 p-4">
-          <div className="w-full max-w-7xl p-8 bg-white rounded shadow-md">
+        <div className="flex-1 p-8 bg-gray-200">
+          <div className="max-w-4xl w-full p-8 bg-white rounded shadow-md mx-auto">
             <h2 className="text-2xl font-bold mb-4 text-center">Leave History</h2>
             {isLoading ? (
               <p className="text-center">Loading...</p>
@@ -147,20 +129,12 @@ const Leave = () => {
                           <td className="border px-4 py-2">{leave.employeeId}</td>
                           <td className="border px-4 py-2">{leave.status}</td>
                           <td className="border px-4 py-2">
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => handleApprove(leave.leaveId)}
-                                className="bg-green-500 text-white px-3 py-1 rounded"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => handleDisapprove(leave.leaveId)}
-                                className="bg-red-500 text-white px-3 py-1 rounded"
-                              >
-                                Disapprove
-                              </button>
-                            </div>
+                            <button
+                              onClick={() => handleDownload(leave.employeeId)}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <BsDownload className="text-lg" />
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -176,4 +150,4 @@ const Leave = () => {
   );
 };
 
-export default Leave;
+export default LeaveReport;

@@ -24,6 +24,9 @@ const Profile = () => {
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [salaryType, setSalaryType] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentDuration, setPaymentDuration] = useState('');
 
   useEffect(() => {
     fetchDepartmentOptions();
@@ -101,6 +104,18 @@ const Profile = () => {
     setProfilePhoto(file);
   };
 
+  const handleSalaryTypeChange = (event) => {
+    setSalaryType(event.target.value);
+  };
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+
+  const handlePaymentDurationChange = (event) => {
+    setPaymentDuration(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -117,7 +132,10 @@ const Profile = () => {
       !confirmPassword ||
       !department ||
       educationCredentialFiles.length === 0 ||
-      !profilePhoto
+      !profilePhoto ||
+      !salaryType ||
+      !paymentMethod ||
+      !paymentDuration
     ) {
       setFormError('Please fill in all the required fields.');
       return;
@@ -130,7 +148,6 @@ const Profile = () => {
 
     setFormError('');
 
-    
     setFirstName('');
     setLastName('');
     setEmployeeId(null);
@@ -144,6 +161,9 @@ const Profile = () => {
     setDepartment('');
     setEducationCredentialFiles([]);
     setProfilePhoto(null);
+    setSalaryType('');
+    setPaymentMethod('');
+    setPaymentDuration('');
 
     navigate('/SubmittedProfile');
   };
@@ -291,6 +311,46 @@ const Profile = () => {
               accept=".jpg,.png"
               onChange={handleProfilePhotoChange}
             />
+          </div>
+          <div>
+            <Label htmlFor="salaryType">Salary Type:</Label>
+            <select
+              id="salaryType"
+              value={salaryType}
+              onChange={handleSalaryTypeChange}
+              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Salary Type</option>
+              <option value="monthly">Monthly</option>
+              <option value="hourly">Hourly</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="paymentMethod">Payment Method:</Label>
+            <select
+              id="paymentMethod"
+              value={paymentMethod}
+              onChange={handlePaymentMethodChange}
+              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Payment Method</option>
+              <option value="bank">Bank Transfer</option>
+              <option value="cash">Cash</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="paymentDuration">Payment Duration:</Label>
+            <select
+              id="paymentDuration"
+              value={paymentDuration}
+              onChange={handlePaymentDurationChange}
+              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Select Payment Duration</option>
+              <option value="monthly">Monthly</option>
+              <option value="bi-weekly">Bi-Weekly</option>
+              <option value="weekly">Weekly</option>
+            </select>
           </div>
           <div className="col-span-2">
             <Button

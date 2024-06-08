@@ -1,239 +1,362 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { PayrollService } from '../services/PayrollService';
+import { BsFillGearFill, BsPaypal, BsPeopleFill, BsFillGrid3X3GapFill, BsBriefcaseFill, BsGrid1X2Fill, BsMenuButtonWideFill } from 'react-icons/bs';
+import { FcDepartment } from 'react-icons/fc';
+import Header from '@/app/layout/Header';
 
 const Payroll = () => {
+    const [submissionStatus, setSubmissionStatus] = useState('');
+    const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+    const [showSubmenu, setShowSubmenu] = useState(false);
+
+    const today = new Date().toISOString().split('T')[0];
+
+    const handleSidebarToggle = () => {
+        setOpenSidebarToggle(!openSidebarToggle);
+    };
+
+    const handleSettingsClick = () => {
+        setShowSubmenu(!showSubmenu);
+    };
+
     const formik = useFormik({
         initialValues: {
-            employeeId: '',
-            type: 'Select Salary Type',
-            amount: '',
-            frequency: 'Select Payment Duration',
-            paymentDate: '',
-            bonuses: '',
-            startDate: '',
-            endDate: '',
-            paymentStatus: 'Select Payment Status',
-            paymentMethod: 'Select Payment Method',
-            netPay: 0,
-            // Add missing fields
-            SalaryType: '',
-            PaymentMethod: '',
-            PaymentDuration: '',
+            EmployeeId: '',
+            SalaryType: 'Select Salary Type',
+            Amount: '',
+            PaymentDuration: 'Select Payment Duration',
+            PaymentDate: '',
+            Bonuses: '',
+            StartDate: '',
+            EndDate: '',
+            PaymentStatus: 'Select Payment Status',
+            PaymentMethod: 'Select Payment Method',
+            NetPay: 0,
         },
         validationSchema: Yup.object({
-            employeeId: Yup.string().required('Employee ID is required'),
-            type: Yup.string().notOneOf(['Select Salary Type'], 'Please select a salary type').required('Salary Type is required'),
-            amount: Yup.number().required('Amount is required').positive('Amount must be positive'),
-            frequency: Yup.string().notOneOf(['Select Payment Duration'], 'Please select a payment duration').required('Payment Duration is required'),
-            paymentDate: Yup.date().required('Payment Date is required'),
-            startDate: Yup.date().required('Start Date is required'),
-            endDate: Yup.date().required('End Date is required'),
-            bonuses: Yup.number().positive('Bonuses must be positive'),
-            paymentStatus: Yup.string().notOneOf(['Select Payment Status'], 'Please select a payment status').required('Payment Status is required'),
-            paymentMethod: Yup.string().notOneOf(['Select Payment Method'], 'Please select a payment method').required('Payment Method is required'),
-            netPay: Yup.number().required('Net Pay is required').positive('Net Pay must be positive'),
-            // Add validation for missing fields
-            SalaryType: Yup.string().required('Salary Type is required'),
-            PaymentMethod: Yup.string().required('Payment Method is required'),
-            PaymentDuration: Yup.string().required('Payment Duration is required'),
+            EmployeeId: Yup.string().required('Employee ID is required'),
+            SalaryType: Yup.string().notOneOf(['Select Salary Type'], 'Please select a salary type').required('Salary Type is required'),
+            Amount: Yup.number().required('Amount is required').positive('Amount must be positive'),
+            PaymentDuration: Yup.string().notOneOf(['Select Payment Duration'], 'Please select a payment duration').required('Payment Duration is required'),
+            PaymentDate: Yup.date().required('Payment Date is required').min(today, 'Payment Date cannot be earlier than today'),
+            StartDate: Yup.date().required('Start Date is required').min(today, 'Start Date cannot be earlier than today'),
+            EndDate: Yup.date().required('End Date is required').min(Yup.ref('StartDate'), 'End Date must be greater than the start date'),
+            Bonuses: Yup.number().positive('Bonuses must be positive'),
+            PaymentStatus: Yup.string().notOneOf(['Select Payment Status'], 'Please select a payment status').required('Payment Status is required'),
+            PaymentMethod: Yup.string().notOneOf(['Select Payment Method'], 'Please select a payment method').required('Payment Method is required'),
+            NetPay: Yup.number().required('Net Pay is required').positive('Net Pay must be positive'),
         }),
         onSubmit: async (values, { resetForm }) => {
+            const formattedValues = {
+                ...values,
+                PaymentDate: values.PaymentDate ? new Date(values.PaymentDate).toISOString().split('T')[0] : '',
+                StartDate: values.StartDate ? new Date(values.StartDate).toISOString().split('T')[0] : '',
+                EndDate: values.EndDate ? new Date(values.EndDate).toISOString().split('T')[0] : '',
+            };
+
             try {
-                console.log('Submitting payroll data:', values);
-                await PayrollService.addPayroll(values);
+                await PayrollService.addPayroll(formattedValues);
                 resetForm();
-                // Handle successful payroll addition here, e.g., updating state or redirecting
+                setSubmissionStatus('Payroll added successfully!');
             } catch (error) {
                 console.error('Error adding payroll:', error.response ? error.response.data : error.message);
+                setSubmissionStatus('Failed to add payroll. Please try again.');
             }
         }
     });
 
     return (
-        <div className="bg-gray-100">
-            <div className="container max-w-screen-md mx-auto px-2 bg-gray-100 min-h-screen">
-                <h1 className="text-3xl font-bold mb-4">Payroll Management</h1>
-                <form onSubmit={formik.handleSubmit} className="bg-white shadow-lg rounded-lg p-6 mb-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Employee ID:</label>
-                            <input 
-                                type="text" 
-                                name="employeeId" 
-                                value={formik.values.employeeId} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.employeeId && formik.errors.employeeId ? (
-                                <div className="text-red-500 text-sm">{formik.errors.employeeId}</div>
-                            ) : null}
+        <div className="flex flex-col h-screen">
+            <Header />
+            <div className="flex flex-1">
+                <div className={`${openSidebarToggle ? "sidebar-responsive" : ""} bg-white text-gray-800 overflow-y-auto p-4 transition-all duration-300 md:w-64 lg:w-64`}>
+                    <aside id="sidebar">
+                        <div className='flex justify-between items-center mb-4'>
+                            <div className='flex items-center'>
+                                <button className="md:hidden" onClick={handleSidebarToggle}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <span className='cursor-pointer' onClick={handleSidebarToggle}></span>
                         </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Salary Type:</label>
-                            <select 
-                                name="type" 
-                                value={formik.values.type} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            >
-                                <option disabled>Select Salary Type</option>
-                                <option value="salaried">Salaried</option>
-                                <option value="contractual">Contractual</option>
-                            </select>
-                            {formik.touched.type && formik.errors.type ? (
-                                <div className="text-red-500 text-sm">{formik.errors.type}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Amount:</label>
-                            <input 
-                                type="text" 
-                                name="amount" 
-                                value={formik.values.amount} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.amount && formik.errors.amount ? (
-                                <div className="text-red-500 text-sm">{formik.errors.amount}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Payment Duration:</label>
-                            <select 
-                                name="frequency" 
-                                value={formik.values.frequency} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            >
-                                <option disabled>Select Payment Duration</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="bi-weekly">Bi-Weekly</option>
-                                <option value="weekly">Weekly</option>
-                            </select>
-                            {formik.touched.frequency && formik.errors.frequency ? (
-                                <div className="text-red-500 text-sm">{formik.errors.frequency}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Payment Date:</label>
-                            <input 
-                                type="date" 
-                                name="paymentDate" 
-                                value={formik.values.paymentDate} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.paymentDate && formik.errors.paymentDate ? (
-                                <div className="text-red-500 text-sm">{formik.errors.paymentDate}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
-                            <input 
-                                type="date" 
-                                name="startDate" 
-                                value={formik.values.startDate} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.startDate && formik.errors.startDate ? (
-                                <div className="text-red-500 text-sm">{formik.errors.startDate}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
-                            <input 
-                                type="date" 
-                                name="endDate" 
-                                value={formik.values.endDate} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.endDate && formik.errors.endDate ? (
-                                <div className="text-red-500 text-sm">{formik.errors.endDate}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Bonuses:</label>
-                            <input 
-                                type="text" 
-                                name="bonuses" 
-                                value={formik.values.bonuses} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.bonuses && formik.errors.bonuses ? (
-                                <div className="text-red-500 text-sm">{formik.errors.bonuses}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Net Pay:</label>
-                            <input 
-                                type="text" 
-                                name="netPay" 
-                                value={formik.values.netPay} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            />
-                            {formik.touched.netPay && formik.errors.netPay ? (
-                                <div className="text-red-500 text-sm">{formik.errors.netPay}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Payment Status:</label>
-                            <select 
-                                name="paymentStatus" 
-                                value={formik.values.paymentStatus} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            >
-                                <option disabled>Select Payment Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="paid">Paid</option>
-                            </select>
-                            {formik.touched.paymentStatus && formik.errors.paymentStatus ? (
-                                <div className="text-red-500 text-sm">{formik.errors.paymentStatus}</div>
-                            ) : null}
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2">Payment Method:</label>
-                            <select 
-                                name="paymentMethod" 
-                                value={formik.values.paymentMethod} 
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                className="input-field mb-2 border border-gray-300 p-2 rounded"
-                            >
-                                <option disabled>Select Payment Method</option>
-                                <option value="bank">Bank Transfer</option>
-                                <option value="cash">Cash</option>
-                                <option value="check">Check</option>
-                            </select>
-                            {formik.touched.paymentMethod && formik.errors.paymentMethod ? (
-                                <div className="text-red-500 text-sm">{formik.errors.paymentMethod}</div>
-                            ) : null}
-                        </div>
+                        <ul className={`space-y-2 ${openSidebarToggle ? 'block' : 'hidden md:block'}`}>
+                            <li className='sidebar-list-item'>
+                                <a href="#" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors' onClick={handleSettingsClick}>
+                                    <BsFillGearFill className='text-lg mr-2' /> Settings
+                                </a>
+                                {showSubmenu && (
+                                    <ul className="ml-4">
+                                        <li className='sidebar-list-item'>
+                                            <a href="/PayrollSetting" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                                <BsPaypal className='text-lg mr-2' /> Payroll Settings
+                                            </a>
+                                        </li>
+                                        <li className='sidebar-list-item'>
+                                            <a href="/GeneralSettings" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                                <BsFillGearFill className='text-lg mr-2' /> General Settings
+                                            </a>
+                                        </li>
+                                        <li className='sidebar-list-item'>
+                                            <a href="/EmployeeData" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                                <BsPeopleFill className='text-lg mr-2' /> Employee Data
+                                            </a>
+                                        </li>
+                                        <li className='sidebar-list-item'>
+                                            <a href="/PerformanceManagement" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                                <BsFillGrid3X3GapFill className='text-lg mr-2' /> Performance Management
+                                            </a>
+                                        </li>
+                                        <li className='sidebar-list-item'>
+                                            <a href="/LeaveManagement" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                                <BsBriefcaseFill className='text-lg mr-2' /> Attendance and Leave Management
+                                            </a>
+                                        </li>
+                                        <li className='sidebar-list-item'>
+                                            <a href="/TrainingDevelopment" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1'>
+                                                <BsPaypal className='text-lg mr-2' /> Training and Development                                             </a>
+                                        </li>
+                                        <li className='sidebar-list-item'>
+                                            <a href="/Security" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                                <BsPaypal className='text-lg mr-2' /> Security
+                                            </a>
+                                        </li>
+                                    </ul>
+                                )}
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/Admin" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <BsGrid1X2Fill className='text-lg mr-2' /> Dashboard
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/Performance" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <BsFillGrid3X3GapFill className='text-lg mr-2' /> Performance
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/userlist" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <BsPeopleFill className='text-lg mr-2' /> Employees
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/Departmentlist" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <FcDepartment className='text-lg mr-2' /> Department
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/GenerateReport" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <BsMenuButtonWideFill className='text-lg mr-2' /> Reports
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/adminLeave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <BsBriefcaseFill className='text-lg mr-2' /> Leave
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                                <a href="/Payroll" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                                    <BsPaypal className='text-lg mr-2' /> Salary
+                                </a>
+                            </li>
+                            <li className='sidebar-list-item'>
+                <a href="/TrainingForm" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                  <BsMenuButtonWideFill className='text-lg mr-2' /> Training
+                </a>
+              </li>
+                        </ul>
+                    </aside>
+                </div>
+                <div className="flex flex-1 justify-center items-start mt-10">
+                    <div className="container max-w-screen-md mx-auto px-2 bg-gray-100 min-h-screen">
+                        <h1 className="text-3xl font-bold mb-4">Payroll Management</h1>
+                        {submissionStatus && (
+                            <div className={`mb-4 p-2 rounded ${submissionStatus.includes('success') ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+                                {submissionStatus}
+                            </div>
+                        )}
+                        <form onSubmit={formik.handleSubmit} className="bg-white shadow-lg rounded-lg p-6 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Employee ID:</label>
+                                    <input 
+                                        type="text" 
+                                        name="EmployeeId" 
+                                        value={formik.values.EmployeeId} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.EmployeeId && formik.errors.EmployeeId ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.EmployeeId}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Salary Type:</label>
+                                    <select 
+                                        name="SalaryType" 
+                                        value={formik.values.SalaryType} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    >
+                                        <option disabled>Select Salary Type</option>
+                                        <option value="salaried">Salaried</option>
+                                        <option value="contractual">Contractual</option>
+                                    </select>
+                                    {formik.touched.SalaryType && formik.errors.SalaryType ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.SalaryType}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Amount:</label>
+                                    <input 
+                                        type="text" 
+                                        name="Amount" 
+                                        value={formik.values.Amount} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.Amount && formik.errors.Amount ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.Amount}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Payment Duration:</label>
+                                    <select 
+                                        name="PaymentDuration" 
+                                        value={formik.values.PaymentDuration} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    >
+                                        <option disabled>Select Payment Duration</option>
+                                        <option value="monthly">Monthly</option>
+                                        <option value="bi-weekly">Bi-Weekly</option>
+                                        <option value="weekly">Weekly</option>
+                                    </select>
+                                    {formik.touched.PaymentDuration && formik.errors.PaymentDuration ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.PaymentDuration}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Payment Date:</label>
+                                    <input 
+                                        type="date" 
+                                        name="PaymentDate" 
+                                        value={formik.values.PaymentDate} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.PaymentDate && formik.errors.PaymentDate ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.PaymentDate}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
+                                    <input 
+                                        type="date" 
+                                        name="StartDate" 
+                                        value={formik.values.StartDate} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.StartDate && formik.errors.StartDate ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.StartDate}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
+                                    <input 
+                                        type="date" 
+                                        name="EndDate" 
+                                        value={formik.values.EndDate} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.EndDate && formik.errors.EndDate ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.EndDate}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Bonuses:</label>
+                                    <input 
+                                        type="text" 
+                                        name="Bonuses" 
+                                        value={formik.values.Bonuses} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.Bonuses && formik.errors.Bonuses ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.Bonuses}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Payment Status:</label>
+                                    <select 
+                                        name="PaymentStatus" 
+                                        value={formik.values.PaymentStatus} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    >
+                                        <option disabled>Select Payment Status</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="paid">Paid</option>
+                                        <option value="delayed">Delayed</option>
+                                    </select>
+                                    {formik.touched.PaymentStatus && formik.errors.PaymentStatus ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.PaymentStatus}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Payment Method:</label>
+                                    <select 
+                                        name="PaymentMethod" 
+                                        value={formik.values.PaymentMethod} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    >
+                                        <option disabled>Select Payment Method</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="check">Check</option>
+                                        <option value="bank-transfer">Bank Transfer</option>
+                                    </select>
+                                    {formik.touched.PaymentMethod && formik.errors.PaymentMethod ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.PaymentMethod}</div>
+                                    ) : null}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Net Pay:</label>
+                                    <input 
+                                        type="text" 
+                                        name="NetPay" 
+                                        value={formik.values.NetPay} 
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
+                                        className="input-field mb-2 border border-gray-300 p-2 rounded"
+                                    />
+                                    {formik.touched.NetPay && formik.errors.NetPay ? (
+                                        <div className="text-red-500 text-sm">{formik.errors.NetPay}</div>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <button type="submit" className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-600 transition-colors">
+                                Add Payroll
+                            </button>
+                        </form>
                     </div>
-                    <div className="flex justify-end">
-                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
-                            Submit
-                        </button>
-                    </div>
-                </form>
-                <Link to="/dashboard" className="text-blue-500 hover:underline">Back to Dashboard</Link>
+                </div>
             </div>
         </div>
     );

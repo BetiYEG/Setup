@@ -4,7 +4,7 @@ import Home from './Dashboard';
 import { FcDepartment } from "react-icons/fc";
 import {
   BsGrid1X2Fill, BsFillGrid3X3GapFill, BsPeopleFill,
-  BsListCheck, BsMenuButtonWideFill, BsFillGearFill, BsBriefcaseFill, BsPaypal} from 'react-icons/bs';
+ BsMenuButtonWideFill, BsFillGearFill, BsBriefcaseFill, BsPaypal} from 'react-icons/bs';
 
 // eslint-disable-next-line react/prop-types
 function Admin({ openSidebarToggle, OpenSidebar }) {
@@ -108,33 +108,34 @@ function Admin({ openSidebarToggle, OpenSidebar }) {
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="SubmittedProfile" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="UserList" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPeopleFill className='text-lg mr-2' /> Employees
                 </a>
               </li>
+             
               <li className='sidebar-list-item'>
-                <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <BsListCheck className='text-lg mr-2' /> Attendance
-                </a>
-              </li>
-              <li className='sidebar-list-item'>
-                <a href="" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="DepartmentList" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <FcDepartment className='text-lg mr-2' /> Department
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="/Report" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/GenerateReport" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsMenuButtonWideFill className='text-lg mr-2' /> Reports
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="/Leave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/AdminLeave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsBriefcaseFill className='text-lg mr-2' /> Leave
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="/Salary" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/payroll" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPaypal className='text-lg mr-2' /> Salary
+                </a>
+              </li>
+              <li className='sidebar-list-item'>
+                <a href="/TrainingForm" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                  <BsMenuButtonWideFill className='text-lg mr-2' /> Training
                 </a>
               </li>
               

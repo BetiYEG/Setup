@@ -1,46 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Added Link import
+import React, { useState } from 'react';
+import { BsDownload } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 import Header from '@/app/layout/Header';
-import Home from './Dashboard';
-
 import {
   BsChevronDown,
   BsBriefcaseFill,
   BsMenuButtonWideFill,
   BsPaypal,
-  BsFillGrid3X3GapFill, // Added BsFillGrid3X3GapFill import
+  BsFillGrid3X3GapFill,
 } from 'react-icons/bs';
 
-function Manager({ openSidebarToggle, OpenSidebar }) {
-  const [menuItems, setMenuItems] = useState([]);
-  const [showReportsSubMenu, setShowReportsSubMenu] = useState(false); // Added state for Reports submenu toggle
+const WeeklyReport = () => {
+  const [reports, setReports] = useState([]);
+  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+  const [showReportsSubMenu, setShowReportsSubMenu] = useState(false);
 
-  useEffect(() => {
-    const fetchMenuData = async () => {
-      try {
-        // Fetch menu items from the backend API
-        const response = await fetch('/api/menu'); // Replace '/api/menu' with your actual API endpoint
-        if (response.ok) {
-          const data = await response.json();
-          setMenuItems(data);
-        } else {
-          throw new Error('Failed to fetch menu data');
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchMenuData();
-  }, []);
-
-  const userRoles = ['manager'];
-
-  const filteredMenuItems = menuItems.filter(item => userRoles.includes(item.role));
-
-  const toggleReportsSubMenu = () => {
-    setShowReportsSubMenu(!showReportsSubMenu);
+  const handleFileChange = (e, reportId) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const updatedReports = reports.map(report =>
+          report.id === reportId ? { ...report, reportFile: reader.result.split(',')[1] } : report
+        );
+        setReports(updatedReports);
+      };
+    }
   };
+
+  const handleDownload = (base64String, fileName) => {
+    const linkSource = `data:application/pdf;base64,${base64String}`;
+    const downloadLink = document.createElement("a");
+    const fileNameWithExtension = `${fileName}.pdf`;
+
+    downloadLink.href = linkSource;
+    downloadLink.download = fileNameWithExtension;
+    downloadLink.click();
+  };
+
+  const OpenSidebar = () => setOpenSidebarToggle(!openSidebarToggle);
+  const toggleReportsSubMenu = () => setShowReportsSubMenu(!showReportsSubMenu);
 
   return (
     <div className="flex flex-col h-screen">
@@ -102,12 +102,50 @@ function Manager({ openSidebarToggle, OpenSidebar }) {
             </ul>
           </aside>
         </div>
-        <div className="flex-1 overflow-y-auto">
-          <Home />
+        <div className="container mx-auto py-8">
+          <h1 className="text-2xl font-bold mb-4">Weekly Reports</h1>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="py-2 px-4 text-left">Employee ID</th>
+                <th className="py-2 px-4 text-left">Employee Name</th>
+                <th className="py-2 px-4 text-left">Weekly Report</th>
+                <th className="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reports.map((report) => (
+                <tr key={report.id} className="bg-white">
+                  <td className="py-2 px-4">{report.employeeId}</td>
+                  <td className="py-2 px-4">{report.employeeName}</td>
+                  <td className="py-2 px-4">
+                    <input
+                      type="file"
+                      accept=".pdf,.docx"
+                      onChange={(e) => handleFileChange(e, report.id)}
+                      className="form-input block w-full border border-gray-300 rounded"
+                      required
+                    />
+                  </td>
+                  <td className="py-2 px-4">
+                    {report.reportFile && (
+                      <button
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={() => handleDownload(report.reportFile, `${report.employeeId}_${report.id}`)}
+                      >
+                        <BsDownload className="inline-block mr-2" /> Download
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         </div>
       </div>
-    </div>
   );
-}
+};
 
-export default Manager;
+export default WeeklyReport;
+

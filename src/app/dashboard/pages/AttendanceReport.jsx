@@ -1,42 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Added Link import
+import AttendanceService from '../services/AttendanceService';
+import { BsDownload, BsChevronDown, BsBriefcaseFill, BsMenuButtonWideFill, BsPaypal, BsFillGrid3X3GapFill } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 import Header from '@/app/layout/Header';
-import Home from './Dashboard';
-
-import {
-  BsChevronDown,
-  BsBriefcaseFill,
-  BsMenuButtonWideFill,
-  BsPaypal,
-  BsFillGrid3X3GapFill, // Added BsFillGrid3X3GapFill import
-} from 'react-icons/bs';
-
-function Manager({ openSidebarToggle, OpenSidebar }) {
-  const [menuItems, setMenuItems] = useState([]);
-  const [showReportsSubMenu, setShowReportsSubMenu] = useState(false); // Added state for Reports submenu toggle
+const AttendanceReport = () => {
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
+  const [showReportsSubMenu, setShowReportsSubMenu] = useState(false);
 
   useEffect(() => {
-    const fetchMenuData = async () => {
+    const fetchAttendanceRecords = async () => {
       try {
-        // Fetch menu items from the backend API
-        const response = await fetch('/api/menu'); // Replace '/api/menu' with your actual API endpoint
-        if (response.ok) {
-          const data = await response.json();
-          setMenuItems(data);
-        } else {
-          throw new Error('Failed to fetch menu data');
-        }
+        const data = await AttendanceService.getAttendanceRecords();
+        const formattedData = data.map(record => {
+          const [clockinHours, clockinMinutes, clockinSeconds] = record.clockinTime.split(':').map(Number);
+          const clockinTime = new Date();
+          clockinTime.setHours(clockinHours, clockinMinutes, clockinSeconds, 0);
+
+          let totalTime = null;
+          if (record.clockoutTime) {
+            const [clockoutHours, clockoutMinutes, clockoutSeconds] = record.clockoutTime.split(':').map(Number);
+            const clockoutTime = new Date();
+            clockoutTime.setHours(clockoutHours, clockoutMinutes, clockoutSeconds, 0);
+
+            totalTime = clockoutTime - clockinTime;
+          }
+
+          return { ...record, totalTime };
+        });
+
+        setAttendanceRecords(formattedData);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching attendance records:', error);
       }
     };
-
-    fetchMenuData();
+    fetchAttendanceRecords();
   }, []);
 
-  const userRoles = ['manager'];
+  const formatTime = (milliseconds) => {
+    if (typeof milliseconds !== 'number' || isNaN(milliseconds) || milliseconds < 0) {
+      return '00:00:00';
+    }
 
-  const filteredMenuItems = menuItems.filter(item => userRoles.includes(item.role));
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const downloadAttendanceRecord = (recordId) => {
+    // Implementation to download attendance record by record ID
+  };
+
+  const OpenSidebar = () => {
+    setOpenSidebarToggle(!openSidebarToggle);
+  };
 
   const toggleReportsSubMenu = () => {
     setShowReportsSubMenu(!showReportsSubMenu);
@@ -44,7 +64,8 @@ function Manager({ openSidebarToggle, OpenSidebar }) {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+          {/* Header component goes here */}
+          <Header />
       <div className="flex flex-1">
         <div className={`${openSidebarToggle ? "sidebar-responsive" : ""} bg-white text-gray-800 overflow-y-auto p-4 transition-all duration-300 md:w-64 lg:w-64`}>
           <aside id="sidebar">
@@ -102,12 +123,42 @@ function Manager({ openSidebarToggle, OpenSidebar }) {
             </ul>
           </aside>
         </div>
-        <div className="flex-1 overflow-y-auto">
-          <Home />
+        <div className="container mx-auto py-8">
+          <h1 className="text-2xl font-bold mb-4">Attendance Records</h1>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="py-2 px-4 text-left">Employee Name</th>
+                <th className="py-2 px-4 text-left">Check-in Time</th>
+                <th className="py-2 px-4 text                  -left">Check-out Time</th>
+                <th className="py-2 px-4 text-left">Total Time Attended</th>
+                <th className="py-2 px-4 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendanceRecords.map((record, index) => (
+                <tr key={record.id} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                  <td className="py-2 px-4">{record.employeeName}</td>
+                  <td className="py-2 px-4 ">{record.clockinTime}</td>
+                  <td className="py-2 px-4">{record.clockoutTime || 'Still Clocked In'}</td>
+                  <td className="py-2 px-4">{record.totalTime !== null ? formatTime(record.totalTime) : 'N/A'}</td>
+                  <td className="py-2 px-4">
+                    <button
+                      className="text-blue-500 hover:text-blue-700"
+                      onClick={() => downloadAttendanceRecord(record.id)}
+                    >
+                      <BsDownload className="text-lg" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default Manager;
+export default AttendanceReport;
+

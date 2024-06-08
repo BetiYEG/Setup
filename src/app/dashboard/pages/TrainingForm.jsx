@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import UserListService from '@/app/dashboard/services/UserListService';
+import React, { useState } from 'react';
+import { createTraining } from '../services/TrainingFormService'; // Adjust the path if needed
 import Header from '@/app/layout/Header';
 import { FcDepartment } from "react-icons/fc";
 
@@ -14,51 +13,41 @@ import {
   BsPaypal
 } from 'react-icons/bs';
 
-const UserList = () => {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+const TrainingForm = () => {
+  const [formData, setFormData] = useState({
+    type: 'video',
+    title: '',
+    description: '',
+    url: '',
+  });
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false); 
   const [showSubmenu, setShowSubmenu] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-  const fetchData = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    
+    // Log formData before making the API call
+    console.log('Submitting form data:', formData);
+    
     try {
-      const usersData = await UserListService.fetchUsers();
-      setUsers(usersData);
-      setIsLoading(false);
+      const responseData = await createTraining(formData);
+      setSuccess('Training created successfully!');
+      console.log('Response:', responseData);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setIsLoading(false);
+      setError('Failed to create training');
     }
-  };
-
-  const handleDeleteUser = async (userEmail) => {
-    try {
-      await UserListService.deleteUser(userEmail);
-      setUsers(users.filter((user) => user.employeeEmail !== userEmail));
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  };
-
-  const handleEditUser = (user) => {
-    navigate(`/UpdatedProfile/${user.employeeId}`, { state: { user } });
-  };
-
-  const handleAddUser = () => {
-    navigate('/AddUser');
-  };
-
-  const handleFileUpload = (user) => {
-    navigate(`/FileUploadPage/${user.employeeId}`, { state: { user } });
-  };
-
-  const handleMoreDetails = (user) => {
-    navigate('/EmployeeDetail', { state: { user } });
   };
 
   const handleSettingsClick = () => {
@@ -70,7 +59,7 @@ const UserList = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen bg-gray-100 ">
       <Header />
       <div className="flex flex-1">
         <div className={`${openSidebarToggle ? "sidebar-responsive" : ""} bg-white text-gray-800 overflow-y-auto p-4 transition-all duration-300 md:w-64 lg:w-64`}>
@@ -153,7 +142,7 @@ const UserList = () => {
               </li>
               <li className='sidebar-list-item'>
                 <a href="/GenerateReport" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <BsMenuButtonWideFill className='text-lg mr-2' /> Reports
+                <BsMenuButtonWideFill className='text-lg mr-2' /> Reports
                 </a>
               </li>
               <li className='sidebar-list-item'>
@@ -162,72 +151,77 @@ const UserList = () => {
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="/TrainingForm" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
-                  <BsMenuButtonWideFill className='text-lg mr-2' /> Training
-                </a>
-              </li>
-              <li className='sidebar-list-item'>
                 <a href="/payroll" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsPaypal className='text-lg mr-2' /> Salary
                 </a>
               </li>
+              <li className='sidebar-list-item'>
+                <a href="/TrainingForm" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                  <BsMenuButtonWideFill className='text-lg mr-2' /> Training
+                </a>
+              </li>
             </ul>
           </aside>
-        </div>
-        <div className="flex justify-center  ">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">User List</h2>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-              onClick={handleAddUser}
-            >
-              Add User
-            </button>
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <div className="overflow-x-auto bg-gray-300">
-                <table className="table-auto min-w-full divide-y divide-gray-200 shadow-lg overflow-hidden border-b border-gray-500 sm:rounded-lg">
-                  <thead className="bg-gray-50">
-                    <tr className="bg-gray-300">
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attribute</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-  {users.map((user, index) => (
-    <tr key={user.employeeId} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-      <td className="px-6 py-4 whitespace-nowrap">{user.employeeFirstName}</td>
-      <td className="px-6 py-4 whitespace-nowrap">{user.employeeLastName}</td>
-      <td className="px-6 py-4 whitespace-nowrap">{user.departmentName || 'N/A'}</td>
-      <td className="px-6 py-4 whitespace-nowrap">{user.employeeEmail}</td>
-      <td className="px-6 py-4 whitespace-nowrap">{user.role || 'N/A'}</td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <button className="text-indigo-600 hover:text-indigo-900 mr-2" onClick={() => handleEditUser(user)}>Edit</button>
-        <button className="text-red-600 hover:text-red-900" onClick={() => handleDeleteUser(user.employeeEmail)}>Delete</button>
-        <button className="text-green-600 hover:text-green-900 ml-2" onClick={() => handleFileUpload(user)}>FileUpload</button>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <button className="text-green-600 hover:text-green-900 ml-2" onClick={() => handleMoreDetails(user)}>More</button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
-                </table>
               </div>
-            )}
+              <div className="flex items-center justify-center min-h-screenb mx-auto ">
+
+        <form onSubmit={handleSubmit} className="space-y-4 p-6 bg-white shadow-md rounded">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Type</label>
+            <input
+              type="text"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              readOnly
+            />
           </div>
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">URL</label>
+            <input
+              type="url"
+              name="url"
+              value={formData.url}
+              onChange={handleChange}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          {error && <div className="text-red-500">{error}</div>}
+          {success && <div className="text-green-500">{success}</div>}
+          <div>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
-    </div>
+          </div>
+          </div>
   );
 };
 
-export default UserList;
+export default TrainingForm;
 

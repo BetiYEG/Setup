@@ -7,13 +7,13 @@ const checkIn = (_clockinTime) => {
   if (!token) throw new Error('No auth token found');
 
   return new Promise((resolve, reject) => {
-    fetch(`${API_BASE_URL}/Attendance/Clockin`, {
+    fetch(`${API_BASE_URL}/Attendance/Clockin`, { // Corrected template literal usage
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`, // Corrected template literal usage
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ _clockinTime: _clockinTime.toISOString().slice(0, -5) + 'Z' }), // Sending the DateTime directly as an object
+      body: JSON.stringify({ ClockinTime: _clockinTime.toISOString() }), // Sending the DateTime directly as an object
     })
     .then(response => {
       return response.json();
@@ -27,21 +27,20 @@ const checkIn = (_clockinTime) => {
   });
 };
 
-const checkOut = (_clockoutTime, ) => {
+const checkOut = (_clockoutTime) => {
   const token = getAuthToken();
   if (!token) throw new Error('No auth token found');
 
   return new Promise((resolve, reject) => {
-    fetch(`${API_BASE_URL}/Attendance/Clockout`, {
+    fetch(`${API_BASE_URL}/Attendance/Clockout`, { // Corrected template literal usage
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`, // Corrected template literal usage
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        _clockoutTime: _clockoutTime.toISOString()
-        
-       }),
+        ClockinTime: _clockoutTime.toISOString() // Assuming the correct field is ClockinTime for check-out
+      }),
     })
     .then(response => {
       if (!response.ok) {

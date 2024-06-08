@@ -1,29 +1,28 @@
 import Header from '@/app/layout/Header';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import fetchDepartments from '../services/DepartmentListService';
+import { fetchLeaveHistory } from '../services/LeaveService'; // No longer importing approveLeave and disapproveLeave
 import { BsFillGearFill, BsPaypal, BsPeopleFill, BsFillGrid3X3GapFill, BsBriefcaseFill, BsGrid1X2Fill, BsMenuButtonWideFill } from 'react-icons/bs';
 import { FcDepartment } from 'react-icons/fc';
 
-const DepartmentList = () => {
-  const [departments, setDepartments] = useState([]);
-  const [loading, setLoading] = useState(true);
+const AdminLeave = () => {
+  const [leaveHistory, setLeaveHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [showSubmenu, setShowSubmenu] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchLeaveData = async () => {
       try {
-        const departmentsData = await fetchDepartments();
-        setDepartments(departmentsData);
-        setLoading(false);
+        const data = await fetchLeaveHistory();
+        setLeaveHistory(data);
+        setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching departments:', error);
-        setLoading(false);
+        console.error('Error fetching leave history:', error);
+        setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchLeaveData();
   }, []);
 
   const handleSidebarToggle = () => {
@@ -33,10 +32,6 @@ const DepartmentList = () => {
   const handleSettingsClick = () => {
     setShowSubmenu(!showSubmenu);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -100,7 +95,7 @@ const DepartmentList = () => {
                 )}
               </li>
               <li className='sidebar-list-item'>
-                <a href="/Admin" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/admin" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsGrid1X2Fill className='text-lg mr-2' /> Dashboard
                 </a>
               </li>
@@ -114,18 +109,19 @@ const DepartmentList = () => {
                   <BsPeopleFill className='text-lg mr-2' /> Employees
                 </a>
               </li>
+            
               <li className='sidebar-list-item'>
                 <a href="/Departmentlist" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <FcDepartment className='text-lg mr-2' /> Department
                 </a>
               </li>
               <li className='sidebar-list-item'>
-                <Link to="/GenerateReport" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/GenerateReport" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsMenuButtonWideFill className='text-lg mr-2' /> Reports
-                </Link>
+                </a>
               </li>
               <li className='sidebar-list-item'>
-                <a href="/AdminLeave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
+                <a href="/Leave" className='flex items-center hover:bg-blue-500 hover:text-white px-2 py-1 rounded-lg transition-colors'>
                   <BsBriefcaseFill className='text-lg mr-2' /> Leave
                 </a>
               </li>
@@ -142,33 +138,44 @@ const DepartmentList = () => {
             </ul>
           </aside>
         </div>
-        <div className="container mx-auto px-4 py-8">
-          <h2 className="text-3xl font-bold mb-4">Department List</h2>
-          <div className="shadow-xl bg-white p-6 rounded-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Departments</h3>
-              <Link to="/AddDepartment">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded">
-                  Add Department
-                </button>
-              </Link>
-            </div>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 bg-gray-100 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Department Name</th>
-                  <th className="px-6 py-3 bg-gray-100 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">Department Description</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {departments.map((department) => (
-                  <tr key={department.departmentId}>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm text-gray-900">{department.departmentName}</td>
-                    <td className="px-6 py-4 whitespace-no-wrap text-sm text-gray-900">{department.departmentDescription}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+        <div className="flex-grow flex flex-col justify-start items-center bg-gray-200 p-4">
+          <div className="w-full max-w-7xl p-8 bg-white rounded shadow-md">
+            <h2 className="text-2xl font-bold mb-4 text-center">Leave History</h2>
+            {isLoading ? (
+              <p className="text-center">Loading...</p>
+            ) : (
+              <>
+                {leaveHistory.length === 0 ? (
+                  <p className="text-center">No leave history available.</p>
+                ) : (
+                  <table className="min-w-full bg-white">
+                    <thead>
+                      <tr>
+                        <th className="border px-4 py-2">Leave ID</th>
+                        <th className="border px-4 py-2">Leave Type</th>
+                        <th className="border px-4 py-2">Start Date</th>
+                        <th className="border px-4 py-2">End Date</th>
+                        <th className="border px-4 py-2">Employee ID</th>
+                        <th className="border px-4 py-2">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {leaveHistory.map((leave) => (
+                        <tr key={leave.leaveId}>
+                          <td className="border px-4 py-2">{leave.leaveId}</td>
+                          <td className="border px-4 py-2">{leave.leaveType}</td>
+                          <td className="border px-4 py-2">{leave.startDate}</td>
+                          <td className="border px-4 py-2">{leave.endDate}</td>
+                          <td className="border px-4 py-2">{leave.employeeId}</td>
+                          <td className="border px-4 py-2">{leave.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -176,4 +183,4 @@ const DepartmentList = () => {
   );
 };
 
-export default DepartmentList;
+export default AdminLeave;
